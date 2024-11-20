@@ -3,7 +3,10 @@ pipeline {
     
     environment {
         LABS = credentials('labcreds')
+        JAVA_HOME = '/path/to/your/java'  // Set your JAVA_HOME path here
+        PATH = "${env.JAVA_HOME}/bin:${env.PATH}"  // Add Java binaries to PATH
     }
+    
     stages {
         stage('Setup Virtual Environment') {
             steps {
@@ -19,7 +22,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    // Activate the virtual environment and install dependencies using pipenv
+                    // Install your project dependencies (e.g., requirements.txt or Pipfile)
                     sh './retail_pipeline_venv/bin/pipenv install'
                 }
             }
@@ -27,7 +30,11 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    // Run tests in the virtual environment
+                    // Ensure JAVA_HOME is set for PySpark to work
+                    sh 'echo $JAVA_HOME'
+                    sh 'echo $PATH'
+                    
+                    // Run tests (assuming you are using pytest for tests)
                     sh './retail_pipeline_venv/bin/pipenv run pytest'
                 }
             }
@@ -35,18 +42,19 @@ pipeline {
         stage('Package') {
             steps {
                 script {
-                    // Package the project into a zip file
-                    sh 'zip -r retailproject.zip .'
+                    // Package your application (e.g., create a .tar.gz or other artifact)
+                    sh './retail_pipeline_venv/bin/pipenv run python setup.py sdist'
                 }
             }
         }
         stage('Deploy') {
             steps {
                 script {
-                    // Deploy the project via SSH
-                    sh 'sshpass -p $LABS_PSW scp -o StrictHostKeyChecking=no -r . $LABS_USR@g01.itversity.com:/home/itv006277/retailproject'
+                    // Add deployment steps here (e.g., deploy to a server or cloud)
+                    echo "Deploy your package here"
                 }
             }
         }
     }
 }
+
