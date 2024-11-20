@@ -1,51 +1,5 @@
 pipeline {
     agent any
-
-    environment {
-        LABS = credentials('labcreds')
-    }
-
-    stages {
-        stage('Setup') {
-            steps {
-                // Create the virtual environment if it doesn't already exist
-                sh '''
-                    if [ ! -d "~/.venvs/myproject" ]; then
-                        python3 -m venv ~/.venvs/myproject
-                    fi
-                '''
-                // Activate the virtual environment and install pipenv
-                sh '. ~/.venvs/myproject/bin/activate && pip install pipenv'
-            }
-        }
-        stage('Build') {
-            steps {
-                // Use pipenv to install dependencies inside the virtual environment
-                sh '. ~/.venvs/myproject/bin/activate && pipenv install'
-            }
-        }
-        stage('Test') {
-            steps {
-                // Run pytest inside the virtual environment
-                sh '. ~/.venvs/myproject/bin/activate && pipenv run pytest'
-            }
-        }
-        stage('Package') {
-            steps {
-                // Package the project
-                sh 'zip -r retailproject.zip .'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                // Deploy to the target server
-                sh 'sshpass -p $LABS_PSW scp -o StrictHostKeyChecking=no -r . $LABS_USR@g01.itversity.com:/home/itv006277/retailproject'
-            }
-        }
-    }
-}
-pipeline {
-    agent any
     
     environment {
         LABS = credentials('labcreds')
