@@ -41,7 +41,8 @@ pipeline {
         }
         stage('Package') {
             steps {
-                sh 'zip -r retailproject.zip .'
+                // Create the zip file but exclude the venv directory
+                sh 'zip -r retailproject.zip . -x "retail_pipeline_venv/*"'
             }
         }
         stage('Deploy') {
