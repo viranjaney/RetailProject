@@ -41,18 +41,13 @@ pipeline {
         }
         stage('Package') {
             steps {
-                script {
-                    // Package your application (e.g., create a .tar.gz or other artifact)
-                    sh 'zip -r retailproject.zip .'
-                }
+                sh 'zip -r retailproject.zip .'
             }
         }
         stage('Deploy') {
             steps {
-                script {
-                    // Add deployment steps here (e.g., deploy to a server or cloud)
-                    sh 'sshpass -p $LABS_PSW scp -o StrictHostKeyChecking=no -r . $LABS_USR@g01.itversity.com:/home/itv012419/retailproject'
-                }
+                // Add deployment steps here (e.g., deploy to a server or cloud)
+                sh 'sshpass -p $LABS_PSW scp -o StrictHostKeyChecking=no -r . $LABS_USR@g01.itversity.com:/home/itv012419/retailproject'
             }
         }
     }
